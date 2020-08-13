@@ -10,6 +10,8 @@ import UIKit
 
 
 extension UIFont {
-    static let avenir20 = UIFont(name: "avenir", size: 20 )
-    static let avenir26 = UIFont(name: "avenir", size: 26 )
+    static let avenir20 = UIFont(name: "avenir", size: 20)
+    static let avenir26 = UIFont(name: "avenir", size: 26)
+    static let loaSangamMN20 = UIFont(name: "Loa Sangam MN", size: 20)
+    static let loaSangamMN18 = UIFont(name: "Loa Sangam MN", size: 18)
 }
