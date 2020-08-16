@@ -8,22 +8,10 @@
 
 import UIKit
 
-protocol ConfiguringCell {
-    static var reuseId: String { get }
-    var chat: MChat? { get set }
-}
 
-class ActiveChatCell: UICollectionViewCell, ConfiguringCell {
-    
+class ActiveChat: UICollectionViewCell, ConfiguringCell {
+
     static let reuseId: String = "ActiveChatCell"
-    
-    // MARK: - Public properties
-    
-    var chat: MChat? {
-        didSet {
-            configure()
-        }
-    }
     
     // MARK: - UI
     
@@ -73,14 +61,11 @@ class ActiveChatCell: UICollectionViewCell, ConfiguringCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Private methods
+    // MARK: - Public methods
     
-    private func configure() {
-        guard let chat = chat else { return }
-//        profileImageView.image
-        userNameLabel.text = chat.friendName
-        lastMessageLabel.text = chat.lastMessage
-    }
+   func configure<MChat>(with value: MChat)  {
+       
+   }
     
     // MARK: - Constraints
     

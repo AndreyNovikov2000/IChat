@@ -12,6 +12,7 @@ extension UIColor {
     static let titleRed = UIColor(red: 208, green: 2, blue: 27)
     static let backgroundBlack = UIColor(red: 51, green: 51, blue: 51)
     static let backgroundGray = UIColor(red: 230, green: 230, blue: 230)
+    static let shadowGray = UIColor(red: 189, green: 189, blue: 189)
 }
 
 extension UIColor {

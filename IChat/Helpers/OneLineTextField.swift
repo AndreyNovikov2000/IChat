@@ -10,8 +10,6 @@ import UIKit
 
 class OneLineTextField: UITextField {
     
-    
-    
     // MARK: - Live cycle
     
     convenience init(font: UIFont? = .avenir20) {
