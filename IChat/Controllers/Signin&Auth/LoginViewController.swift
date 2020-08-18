@@ -8,11 +8,16 @@
 
 import UIKit
 
+
 class LoginViewController: UIViewController {
+    
+    // MARK: - External proprties
+    
+    weak var myDelegate: AuthNavigationDelegate?
     
     // MARK: - UI
     
-    private let welcomeLabel = UILabel(title: "Welcome", font: .avenir26)
+    private let welcomeLabel = UILabel(title: "Welcome back!", font: .avenir26)
     
     private let loginWithLabel = UILabel(title: "Login with")
     private let orLabel = UILabel(title: "or")
@@ -20,15 +25,18 @@ class LoginViewController: UIViewController {
     private let passwordLabel = UILabel(title: "Password")
     private let needAnAccountLabel = UILabel(title: "Need an account?")
     
-    private let googleButton = UIButton(title: "Google",
-                                        titleColor: .black,
-                                        backgroundColor: .white,
-                                        isShadow: true)
+    private lazy var googleButton: UIButton = {
+        let button = UIButton(title: "Google", titleColor: .black, backgroundColor: .white, font: .avenir20, isShadow: true, cornerRadius: 4)
+        button.comtomizedButton(withImage: UIImage(named: "comtomizedButton"))
+        button.addTarget(self, action: #selector(handleGoogleButtonTapped), for: .touchUpInside)
+        return button
+    }()
     
-    private let loginButton = UIButton(title: "Login",
-                                       titleColor: .white,
-                                       backgroundColor: .black,
-                                       isShadow: false)
+    private lazy var loginButton: UIButton = {
+        let button = UIButton(title: "Email", titleColor: .white, backgroundColor: .backgroundBlack, isShadow: false)
+        button.addTarget(self, action: #selector(handleLoginButtonTapped), for: .touchUpInside)
+        return button
+    }()
     
     private let emailTextField = OneLineTextField(font: .avenir20)
     private let passwordTextField = OneLineTextField(font: .avenir20)
@@ -38,9 +46,9 @@ class LoginViewController: UIViewController {
         button.setTitle("Sign in", for: .normal)
         button.setTitleColor(.titleRed, for: .normal)
         button.titleLabel?.font = .avenir20
+        button.addTarget(self, action: #selector(handleSignUpButtonPressed), for: .touchUpInside)
         return button
     }()
-    
     
     
     // MARK: - Live cycle
@@ -52,6 +60,32 @@ class LoginViewController: UIViewController {
         
         googleButton.comtomizedButton(withImage: UIImage(named: "comtomizedButton"))
         view.backgroundColor = .white
+    }
+    
+    
+    // MARK: - Selector methods
+    
+    @objc private func handleGoogleButtonTapped() {
+        
+    }
+    
+    // MARK: - Selector methods
+    
+    @objc private func handleLoginButtonTapped() {
+        AuthService.shared.logIn(withEmail: emailTextField.text, password: passwordTextField.text) { (result) in
+            switch result {
+            case .success(let user):
+                self.showAlert(withTitle: "Success", message: "You are registred")
+            case .failure(let error):
+                self.showAlert(withTitle: "Error", message: error.localizedDescription)
+            }
+        }
+    }
+    
+    @objc private func handleSignUpButtonPressed() {
+        dismiss(animated: true) {
+            self.myDelegate?.loginViewControllerDidDismiss(self)
+        }
     }
 }
 
@@ -101,29 +135,5 @@ extension LoginViewController {
         
         bottomStackView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: -5).isActive = true
         bottomStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40).isActive = true
-    }
-}
-
-
-
-// MARK: - SwiftUI
-
-import SwiftUI
-
-struct LoginViewProdider: PreviewProvider {
-    static var previews: some View {
-        ContainerView().edgesIgnoringSafeArea(.all)
-    }
-    
-    struct ContainerView: UIViewControllerRepresentable {
-        let viewController = LoginViewController()
-        
-        func makeUIViewController(context: Context) -> UIViewController {
-            return viewController
-        }
-        
-        func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-            
-        }
     }
 }

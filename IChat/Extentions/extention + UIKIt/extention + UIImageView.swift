@@ -16,3 +16,12 @@ extension UIImageView {
     }
 }
 
+
+extension UIImageView {
+    func setupColor(_ color: UIColor?) {
+        guard let color = color else { return }
+        let templayImage = self.image?.withRenderingMode(.alwaysTemplate)
+        self.image = templayImage
+        self.tintColor = color
+    }
+}

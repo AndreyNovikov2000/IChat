@@ -10,9 +10,13 @@ import UIKit
 
 class SignUpViewController: UIViewController {
     
+    // MARK: - External proprties
+    
+    weak var myDelegate: AuthNavigationDelegate?
+    
     // MARK: - UI
     
-    private let welcomeLabel = UILabel(title: "Welcome Peet", font: .avenir26)
+    private let welcomeLabel = UILabel(title: "Welcome back!", font: .avenir26)
     
     private let emailLabel = UILabel(title: "Email")
     private let passwordLabel = UILabel(title: "Password")
@@ -23,16 +27,18 @@ class SignUpViewController: UIViewController {
     private let passwordTextField = OneLineTextField(font: .avenir20)
     private let confirmPasswordTextField = OneLineTextField(font: .avenir20)
     
-    private let signUpButton = UIButton(title: "Sign up",
-                                        titleColor: .white,
-                                        backgroundColor: .backgroundBlack,
-                                        isShadow: false)
+    private lazy var signUpButton: UIButton = {
+        let button = UIButton(title: "Sign up", titleColor: .white, backgroundColor: .backgroundBlack, isShadow: false)
+        button.addTarget(self, action: #selector(handleSignUpButton), for: .touchUpInside)
+        return button
+    }()
     
-    private let loginButton: UIButton = {
+    private lazy var loginButton: UIButton = {
         let button = UIButton()
         button.setTitle("Login", for: .normal)
         button.setTitleColor(.titleRed, for: .normal)
         button.titleLabel?.font = .avenir20
+        button.addTarget(self, action: #selector(handleLoginButtonTapped), for: .touchUpInside)
         return button
     }()
     
@@ -44,6 +50,27 @@ class SignUpViewController: UIViewController {
         setupConstraints()
         
         view.backgroundColor = .white
+    }
+    
+    // MARK: - Selector methods
+    
+    @objc private func handleSignUpButton() {
+        AuthService.shared.createUser(withEmail: emailTextField.text, password: passwordTextField.text, confirmPassword: confirmPasswordTextField.text) { (result) in
+            switch result {
+            case .success(let user):
+                self.showAlert(withTitle: "Success", message: "You are registred") {
+                    self.present(SetupProfileViewController(), animated: true, completion: nil)
+                }
+            case .failure(let error):
+                self.showAlert(withTitle: "Error", message: error.localizedDescription)
+            }
+        }
+    }
+    
+    @objc private func handleLoginButtonTapped() {
+        dismiss(animated: true) {
+            self.myDelegate?.signUpViewControllerDidDismiss(self)
+        }
     }
 }
 
@@ -94,29 +121,5 @@ extension SignUpViewController {
             bottomStackView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -45),
             bottomStackView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 40)
         ])
-        
-    }
-}
-
-
-// MARK: - SwiftUI
-
-import SwiftUI
-
-struct SignUpControllerProdider: PreviewProvider {
-    static var previews: some View {
-        ContainerView().edgesIgnoringSafeArea(.all)
-    }
-    
-    struct ContainerView: UIViewControllerRepresentable {
-        let viewController = SignUpViewController()
-        
-        func makeUIViewController(context: Context) -> UIViewController {
-            return viewController
-        }
-        
-        func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-            
-        }
     }
 }

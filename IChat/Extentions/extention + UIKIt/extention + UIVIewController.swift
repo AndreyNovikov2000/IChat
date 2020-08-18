@@ -15,3 +15,15 @@ extension UIViewController {
         return cell
     }
 }
+
+extension UIViewController {
+    func showAlert(withTitle title: String, message: String, complition:@escaping () -> Void = { }) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "Ok", style: .default) { _ in
+            complition()
+        }
+        
+        alert.addAction(okAction)
+        present(alert, animated: true, completion: nil)
+    }
+}

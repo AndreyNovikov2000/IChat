@@ -8,6 +8,11 @@
 
 import UIKit
 
+protocol AuthNavigationDelegate: class {
+    func loginViewControllerDidDismiss(_ loginViewController: LoginViewController)
+    func signUpViewControllerDidDismiss(_ signupViewController: SignUpViewController )
+}
+
 class AuthViewController: UIViewController {
     
     // MARK: - UI
@@ -18,25 +23,28 @@ class AuthViewController: UIViewController {
     private let emailLabel = UILabel(title: "Or signup with")
     private let alreadyOnBoardLabel = UILabel(title: "Already onboard?")
     
-    private let googleButton = UIButton(title: "Google",
-                                        titleColor: .black,
-                                        backgroundColor: .white,
-                                        font: .avenir20,
-                                        isShadow: true,
-                                        cornerRadius: 4)
+    private lazy var googleButton: UIButton = {
+        let button = UIButton(title: "Google", titleColor: .black, backgroundColor: .white, font: .avenir20, isShadow: true, cornerRadius: 4)
+        button.comtomizedButton(withImage: UIImage(named: "comtomizedButton"))
+        button.addTarget(self, action: #selector(handleGoogleButtonTapped), for: .touchUpInside)
+        return button
+
+    }()
     
-    private let emailButton = UIButton(title: "Email",
-                                       titleColor: .white,
-                                       backgroundColor: .backgroundBlack,
-                                       isShadow: false)
+    private lazy var emailButton: UIButton = {
+        let button = UIButton(title: "Email", titleColor: .white, backgroundColor: .backgroundBlack, isShadow: false)
+        button.addTarget(self, action: #selector(handleEmailButtonTapped), for: .touchUpInside)
+        return button
+    }()
     
-    private let alreadyOnBoardButton = UIButton(title: "Login",
-                                                titleColor: .black,
-                                                backgroundColor: .white,
-                                                font: .avenir20,
-                                                isShadow: true,
-                                                cornerRadius: 4)
+    private lazy var alreadyOnBoardButton: UIButton = {
+        let button = UIButton(title: "Login", titleColor: .black, backgroundColor: .white, font: .avenir20, isShadow: true, cornerRadius: 4)
+        button.addTarget(self, action: #selector(handleLoginButtonTapped), for: .touchUpInside)
+        return button
+    }()
     
+    private let signUpViewController = SignUpViewController()
+    private let loginViewController = LoginViewController()
     
     
     // MARK: - Live cycle
@@ -45,9 +53,24 @@ class AuthViewController: UIViewController {
         super.viewDidLoad()
     
         setupConstraints()
-        
-        googleButton.comtomizedButton(withImage: UIImage(named: "comtomizedButton"))
+    
         view.backgroundColor = .white
+    }
+    
+    // MARK: - Selector methods
+
+    @objc private func handleGoogleButtonTapped() {
+        print(#function)
+    }
+    
+    @objc private func handleEmailButtonTapped() {
+        signUpViewController.myDelegate = self
+        present(signUpViewController, animated: true, completion: nil)
+    }
+    
+    @objc private func handleLoginButtonTapped() {
+        loginViewController.myDelegate = self
+       present(loginViewController, animated: true, completion: nil)
     }
 }
 
@@ -83,25 +106,15 @@ extension AuthViewController {
     }
 }
 
-// MARK: - Swift UI
 
-import SwiftUI
+// MARK: - LoginViewControllerDelegate
 
-struct ViewControllerProdider: PreviewProvider {
-    static var previews: some View {
-        ContainerView().edgesIgnoringSafeArea(.all)
+extension AuthViewController: AuthNavigationDelegate {
+    func loginViewControllerDidDismiss(_ loginViewController: LoginViewController) {
+        present(signUpViewController, animated: true, completion: nil)
     }
     
-    struct ContainerView: UIViewControllerRepresentable {
-        let viewController = AuthViewController()
-        
-        func makeUIViewController(context: Context) -> UIViewController {
-            return viewController
-        }
-        
-        func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
-            
-        }
+    func signUpViewControllerDidDismiss(_ signupViewController: SignUpViewController) {
+        present(loginViewController, animated: true, completion: nil)
     }
 }
-
